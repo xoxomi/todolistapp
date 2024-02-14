@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard } from 'react-native';
 import { TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 
@@ -26,28 +26,30 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.taskWrapper}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.sectionTitle}>Today's todo </Text>
-          <MaterialIcons name="access-time" size={24} color="black" />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.taskWrapper}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.sectionTitle}>Today's todo </Text>
+            <MaterialIcons name="access-time" size={24} color="black" />
+          </View>
+          <View style={styles.items}>
+            {taskItems.map((item, index) => (
+              <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+                <Task text={item.text} completed={item.completed} />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-        <View style={styles.items}>
-          {taskItems.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-              <Task text={item.text} completed={item.completed} />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
 
-      <View style={styles.completedTasksWrapper}>
-        <Text style={styles.sectionTitle}>Completed tasks</Text>
-        <View style={styles.items}>
-          {completedTasks.map((item, index) => (
-            <Task key={index} text={item.text} completed={item.completed} />
-          ))}
+        <View style={styles.completedTasksWrapper}>
+          <Text style={styles.sectionTitle}>Completed tasks</Text>
+          <View style={styles.items}>
+            {completedTasks.map((item, index) => (
+              <Task key={index} text={item.text} completed={item.completed} />
+            ))}
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.writeTaskWrapper}>
         <TextInput
@@ -84,6 +86,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'pink',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 100, // Adjust this value as needed
   },
   taskWrapper: {
     paddingTop: 85,
