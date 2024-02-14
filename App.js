@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, 
+  KeyboardAvoidingView, Platform, 
+  TouchableOpacity, Keyboard } from 'react-native';
 import { TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 
@@ -40,6 +42,9 @@ export default function App() {
             ))}
           </View>
         </View>
+
+       
+        <View style={styles.line} />
 
         <View style={styles.completedTasksWrapper}>
           <Text style={styles.sectionTitle}>Completed tasks</Text>
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 100, // Adjust this value as needed
+    paddingBottom: 100,
   },
   taskWrapper: {
     paddingTop: 85,
@@ -183,5 +188,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#558CF6',
     borderRadius: 2,
     transform: [{ rotate: '45deg' }], 
+  },
+  line: {
+    borderBottomColor: '#000',
+    borderBottomWidth: 1,
+    marginHorizontal: 20, 
   },
 });
