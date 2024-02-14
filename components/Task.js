@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Task = (props) => {
   const [isCompleted, setIsCompleted] = useState(false);
@@ -8,20 +9,30 @@ const Task = (props) => {
     setIsCompleted(!isCompleted);
   };
 
+  const handleDelete = () => {
+    // Call the onDelete function passed from the parent component
+    props.onDelete(props.id);
+  };
+
   return (
-    <TouchableOpacity onPress={toggleCompleted}>
-      <View style={styles.item}>
-        <View style={styles.itemLeft}>
-          <TouchableOpacity
-            style={[styles.square, { backgroundColor: isCompleted ? '#558CF6' : '#fff' }]}
-          />
-          <Text style={[styles.itemText, { textDecorationLine: isCompleted ? 'line-through' : 'none' }]}>
-            {props.text}
-          </Text>
-        </View>
-        <View style={styles.circular}></View>
+    <View style={styles.item}>
+      <View style={styles.itemLeft}>
+        <TouchableOpacity
+          style={[styles.square, { backgroundColor: isCompleted ? '#558CF6' : '#fff' }]}
+          onPress={toggleCompleted}
+        />
+        <Text style={[styles.itemText, { textDecorationLine: isCompleted ? 'line-through' : 'none' }]}>
+          {props.text}
+        </Text>
       </View>
-    </TouchableOpacity>
+      <View style={styles.itemRight}>
+        {props.isCompleted && (
+          <TouchableOpacity onPress={handleDelete}>
+            <MaterialIcons name="delete" size={24} color="#FF6347" />
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
   );
 };
 
@@ -50,12 +61,9 @@ const styles = StyleSheet.create({
   itemText: {
     maxWidth: '80%',
   },
-  circular: {
-    width: 12,
-    height: 12,
-    borderColor: '#558CF6',
-    borderWidth: 2,
-    borderRadius: 5,
+  itemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

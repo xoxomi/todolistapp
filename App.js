@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View,
 import { TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-export default function App() {
+const App = () => {
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
@@ -13,7 +13,7 @@ export default function App() {
   const handleAddTask = () => {
     Keyboard.dismiss();
     if (task.trim() !== '') {
-      setTaskItems([...taskItems, { text: task, completed: false }]);
+      setTaskItems([...taskItems, { id: Date.now(), text: task, completed: false }]);
       setTask('');
     }
   };
@@ -24,6 +24,14 @@ export default function App() {
     completedTask.completed = true;
     setTaskItems(itemsCopy);
     setCompletedTasks([...completedTasks, completedTask]);
+  };
+
+  const deleteTask = (id, isCompleted) => {
+    if (isCompleted) {
+      setCompletedTasks(completedTasks.filter(task => task.id !== id));
+    } else {
+      setTaskItems(taskItems.filter(task => task.id !== id));
+    }
   };
 
   return (
@@ -37,20 +45,22 @@ export default function App() {
           <View style={styles.items}>
             {taskItems.map((item, index) => (
               <TouchableOpacity key={index} onPress={() => completeTask(index)}>
-                <Task text={item.text} completed={item.completed} />
+                <Task {...item} onDelete={deleteTask} />
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-       
+
         <View style={styles.line} />
 
         <View style={styles.completedTasksWrapper}>
           <Text style={styles.sectionTitle}>Completed tasks</Text>
           <View style={styles.items}>
             {completedTasks.map((item, index) => (
-              <Task key={index} text={item.text} completed={item.completed} />
+              <TouchableOpacity key={index} onPress={() => deleteTask(item.id, true)}>
+                <Task {...item} onDelete={deleteTask} />
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -73,15 +83,28 @@ export default function App() {
   );
 }
 
-const Task = ({ text, completed }) => {
+const Task = ({ id, text, completed, onDelete }) => {
+  const handleDelete = () => {
+    onDelete(id, completed);
+  };
+
   return (
     <View style={styles.item}>
       <View style={styles.itemLeft}>
-        <TouchableOpacity style={[styles.square, completed && styles.completedSquare]}></TouchableOpacity>
-        <Text style={[styles.itemText, completed && styles.completedText]}>{text}</Text>
+        <TouchableOpacity
+          style={[styles.square, { backgroundColor: completed ? '#558CF6' : '#fff' }]}
+          onPress={() => onDelete(id, completed)}
+        />
+        <Text style={[styles.itemText, { textDecorationLine: completed ? 'line-through' : 'none' }]}>
+          {text}
+        </Text>
       </View>
-      <View style={styles.circular}>
-        {completed && <View style={styles.completedCross} />}
+      <View style={styles.itemRight}>
+        {completed && (
+          <TouchableOpacity onPress={handleDelete}>
+            <MaterialIcons name="delete" size={24} color="#FF6347" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -160,34 +183,16 @@ const styles = StyleSheet.create({
   square: {
     width: 24,
     height: 24,
-    backgroundColor: '#558CF6',
-    opacity: 0.4,
     borderRadius: 5,
+    borderWidth: 2,
     marginRight: 15,
-  },
-  completedSquare: {
-    backgroundColor: '#C0C0C0', 
-    opacity: 0.4,
   },
   itemText: {
     maxWidth: '80%',
   },
-  completedText: {
-    textDecorationLine: 'line-through', 
-  },
-  circular: {
-    width: 12,
-    height: 12,
-    borderColor: '#558CF6',
-    borderWidth: 2,
-    borderRadius: 5,
-  },
-  completedCross: {
-    width: 8,
-    height: 8,
-    backgroundColor: '#558CF6',
-    borderRadius: 2,
-    transform: [{ rotate: '45deg' }], 
+  itemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   line: {
     borderBottomColor: '#000',
@@ -195,3 +200,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 20, 
   },
 });
+
+export default App;
